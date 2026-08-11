@@ -9,7 +9,10 @@ class Peminjaman extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    // Tambahkan baris ini untuk menentukan nama tabel di database secara manual
+    protected $table = 'peminjamans';
+
+    protected $guarded = ['id'];
 
     public function aset()
     {

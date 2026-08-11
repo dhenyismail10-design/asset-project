@@ -24,8 +24,8 @@ class PeminjamanController extends Controller
     public function create()
     {
         // Hanya mengambil aset yang kondisinya tidak rusak berat dan sedang tidak dipinjam
-        $asets = Aset::where('kondisi', '!=', 'Rusak Berat')->get();
-        return view('peminjaman.create', compact('asets'));
+        $assets = Aset::all();
+        return view('peminjaman.create', compact('assets'));
     }
 
     /**
@@ -35,7 +35,7 @@ class PeminjamanController extends Controller
     {
         // Validasi Input Data
         $request->validate([
-            'asset_id'        => 'required|exists:asets,id',
+            'asset_id' => 'required|exists:aset,id',
             'peminjam'        => 'required|string|max:255',
             'tanggal_pinjam'  => 'required|date',
             'tanggal_kembali' => 'nullable|date|after_or_equal:tanggal_pinjam',
@@ -55,6 +55,32 @@ class PeminjamanController extends Controller
         Peminjaman::create($data);
 
         return redirect()->route('peminjaman.index')->with('success', 'Transaksi peminjaman aset berhasil disimpan!');
+    }
+
+        public function edit($id)
+    {
+        $peminjaman = Peminjaman::findOrFail($id);
+        $assets = Aset::all();
+
+        return view('peminjaman.edit', compact('peminjaman', 'assets'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+        'asset_id'       => 'required|exists:aset,id',
+        'peminjam'       => 'required|string|max:255',
+        'tanggal_pinjam' => 'required|date',
+        'tanggal_kembali'=> 'nullable|date|after_or_equal:tanggal_pinjam',
+        'kondisi_awal'   => 'required|in:Baik,Rusak Ringan,Rusak Berat',
+        'bukti_pinjam'   => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+        'keperluan'      => 'nullable|string',
+    ]);
+
+    $peminjaman = Peminjaman::findOrFail($id);
+    $peminjaman->update($request->all());
+
+    return redirect()->route('peminjaman.index')->with('success', 'Data peminjaman berhasil diperbarui.');
     }
 
     /**

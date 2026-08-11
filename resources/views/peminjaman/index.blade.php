@@ -71,6 +71,9 @@
                                 @endif
                             </td>
                             <td class="py-3 px-3 text-center">
+                                <a href="{{ route('peminjaman.edit', $item->id) }}" class="btn btn-sm btn-outline-warning" title="Edit Data">
+                                                <i class="bi bi-pencil-square"></i> Edit
+                                            </a>
                                 <form action="{{ route('peminjaman.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus riwayat peminjaman ini?')">
                                     @csrf
                                     @method('DELETE')
