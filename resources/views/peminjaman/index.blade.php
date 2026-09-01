@@ -66,8 +66,12 @@
                             <td class="py-3 px-3 text-center fw-semibold">
                                 @if($item->kondisi_awal == 'Baik')
                                     <span class="badge bg-success">BAIK</span>
-                                @else
+                                @elseif($item->kondisi_awal == 'Rusak Ringan')
                                     <span class="badge bg-warning text-dark">RUSAK RINGAN</span>
+                                @elseif($item->kondisi_awal == 'Rusak Berat')
+                                    <span class="badge bg-danger">RUSAK BERAT</span>
+                                @else
+                                    <span class="badge bg-secondary">{{ strtoupper($item->kondisi_awal) }}</span>
                                 @endif
                             </td>
                             <td class="py-3 px-3 text-center">

@@ -22,27 +22,24 @@ class PeminjamanController extends Controller
      * Menampilkan form peminjaman aset.
      */
     public function create()
-    {
-        // Hanya mengambil aset yang kondisinya tidak rusak berat dan sedang tidak dipinjam
-        $asets = Aset::where('kondisi', '!=', 'Rusak Berat')->get();
-        return view('peminjaman.create', compact('asets'));
-    }
+{
+    // Mengambil semua aset yang ada di database
+    $assets = \App\Models\Aset::all();
 
+    return view('peminjaman.create', compact('assets'));
+}
     /**
      * Menyimpan data peminjaman ke database.
      */
     public function store(Request $request)
     {
-        // Validasi Input Data
-        $request->validate([
-            'asset_id'        => 'required|exists:asets,id',
-            'peminjam'        => 'required|string|max:255',
-            'tanggal_pinjam'  => 'required|date',
-            'tanggal_kembali' => 'nullable|date|after_or_equal:tanggal_pinjam',
-            'kondisi_awal'    => 'required|in:Baik,Rusak Ringan',
-            'bukti_pinjam'    => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-            'keperluan'       => 'nullable|string',
-        ]);
+            $request->validate([
+    'asset_id'        => 'required|exists:aset,id',
+    'peminjam'        => 'required|string|max:255',
+    'tanggal_pinjam'  => 'required|date',
+    'tanggal_kembali' => 'nullable|date|after_or_equal:tanggal_pinjam',
+    'kondisi_awal'    => 'required|in:Baik,Rusak Ringan,Rusak Berat', // <-- Pastikan 'Rusak Berat' tercantum di sini
+]);
 
         $data = $request->all();
 
