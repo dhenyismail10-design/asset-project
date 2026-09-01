@@ -2,63 +2,102 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Lokasi;
 use Illuminate\Http\Request;
 
 class LokasiController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Menampilkan semua data lokasi
      */
     public function index()
     {
-        //
+        $lokasis = Lokasi::latest()->get();
+
+        return view('lokasi.index', compact('lokasis'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Menampilkan form tambah lokasi
      */
     public function create()
     {
-        //
+        return view('lokasi.create');
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Menyimpan data lokasi
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'nama_lokasi' => 'required|string|max:255',
+            'alamat'      => 'required|string',
+        ]);
+
+        Lokasi::create([
+            'nama_lokasi' => $request->nama_lokasi,
+            'alamat'      => $request->alamat,
+        ]);
+
+        return redirect()
+            ->route('lokasi.index')
+            ->with('success', 'Data lokasi berhasil ditambahkan.');
     }
 
     /**
-     * Display the specified resource.
+     * Menampilkan detail lokasi
      */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        $lokasi = Lokasi::findOrFail($id);
+
+        return view('lokasi.show', compact('lokasi'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Menampilkan form edit lokasi
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        //
+        $lokasi = Lokasi::findOrFail($id);
+
+        return view('lokasi.edit', compact('lokasi'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Mengupdate data lokasi
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'nama_lokasi' => 'required|string|max:255',
+            'alamat'      => 'required|string',
+        ]);
+
+        $lokasi = Lokasi::findOrFail($id);
+
+        $lokasi->update([
+            'nama_lokasi' => $request->nama_lokasi,
+            'alamat'      => $request->alamat,
+        ]);
+
+        return redirect()
+            ->route('lokasi.index')
+            ->with('success', 'Data lokasi berhasil diperbarui.');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Menghapus data lokasi
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $lokasi = Lokasi::findOrFail($id);
+
+        $lokasi->delete();
+
+        return redirect()
+            ->route('lokasi.index')
+            ->with('success', 'Data lokasi berhasil dihapus.');
     }
 }
