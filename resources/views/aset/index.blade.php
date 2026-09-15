@@ -174,7 +174,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($aset ?? [] as $index => $item)
+                            {{-- DIBERSIHKAN: Panggil variabel $asets (pakai s) --}}
+                            @forelse($asets as $index => $item)
                             <tr>
                                 <td class="py-3 px-3 text-center fw-bold text-muted">{{ $index + 1 }}</td>
                                 <td class="py-3 px-3 text-center">
@@ -182,20 +183,20 @@
                                         {{ $item->kode_barang ?? '-' }}
                                     </span>
                                 </td>
-                                <td class="py-3 px-3 fw-bold text-dark">{{ $item->nama_barang ?? $item->nama }}</td>
+                                <td class="py-3 px-3 fw-bold text-dark">{{ $item->nama_barang }}</td>
                                 <td class="py-3 px-3 text-center fw-semibold">
-                                    @if(($item->kondisi ?? '') == 'Baik')
+                                    @if($item->kondisi == 'Baik')
                                         <span class="badge bg-success">BAIK</span>
-                                    @elseif(($item->kondisi ?? '') == 'Rusak Ringan')
+                                    @elseif($item->kondisi == 'Rusak Ringan')
                                         <span class="badge bg-warning text-dark">RUSAK RINGAN</span>
-                                    @elseif(($item->kondisi ?? '') == 'Rusak Berat')
+                                    @elseif($item->kondisi == 'Rusak Berat')
                                         <span class="badge bg-danger">RUSAK BERAT</span>
                                     @else
                                         <span class="badge bg-secondary">{{ strtoupper($item->kondisi ?? '-') }}</span>
                                     @endif
                                 </td>
                                 <td class="py-3 px-3 text-center">
-                                    <i class="bi bi-geo-alt me-1 text-muted"></i>{{ $item->lokasi->nama_lokasi ?? $item->lokasi->nama ?? '-' }}
+                                    <i class="bi bi-geo-alt me-1 text-muted"></i>{{ is_object($item->lokasi) ? ($item->lokasi->nama_lokasi ?? $item->lokasi->nama) : $item->lokasi }}
                                 </td>
                                 <td class="py-3 px-3 text-center">
                                     <a href="{{ Route::has('aset.edit') ? route('aset.edit', $item->id) : url('/aset/'.$item->id.'/edit') }}" class="btn btn-outline-warning border-0 btn-sm me-1" title="Edit">
