@@ -81,7 +81,7 @@
 
             <ul class="list-unstyled components">
                 <li>
-                    <a href="{{ route('dashboard') }}" class="active">
+                    <a href="{{ Route::has('dashboard') ? route('dashboard') : url('/dashboard') }}" class="active">
                         <i class="bi bi-speedometer2"></i> Dashboard
                     </a>
                 </li>
@@ -125,8 +125,13 @@
                     </a>
                 </li>
 
-                <!-- Menu Master Lokasi -->
+                <!-- Menu Pengaturan & Master Data -->
                 <p>Pengaturan</p>
+                <li>
+                    <a href="{{ Route::has('kategori.index') ? route('kategori.index') : url('/kategori') }}">
+                        <i class="bi bi-tags"></i> Data Kategori
+                    </a>
+                </li>
                 <li>
                     <a href="{{ Route::has('lokasi.index') ? route('lokasi.index') : url('/lokasi') }}">
                         <i class="bi bi-geo-alt"></i> Data Lokasi
@@ -148,7 +153,7 @@
             <!-- Kartu Ringkasan Statistik -->
             <div class="row g-3 mb-4">
                 <!-- Total Aset -->
-                <div class="col-md-3">
+                <div class="col-md">
                     <div class="card card-stat border-0 shadow-sm border-start border-4 border-primary">
                         <div class="card-body p-3 d-flex align-items-center justify-content-between">
                             <div>
@@ -162,12 +167,27 @@
                     </div>
                 </div>
 
+                <!-- Total Kategori -->
+                <div class="col-md">
+                    <div class="card card-stat border-0 shadow-sm border-start border-4 border-purple" style="border-color: #6f42c1 !important;">
+                        <div class="card-body p-3 d-flex align-items-center justify-content-between">
+                            <div>
+                                <span class="text-muted small fw-semibold text-uppercase">Kategori</span>
+                                <h3 class="fw-bold text-dark mb-0 mt-1">{{ $totalKategori ?? 0 }}</h3>
+                            </div>
+                            <div class="p-3 rounded-circle" style="background-color: rgba(111, 66, 193, 0.1); color: #6f42c1;">
+                                <i class="bi bi-tags fs-3"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Total Peminjaman -->
-                <div class="col-md-3">
+                <div class="col-md">
                     <div class="card card-stat border-0 shadow-sm border-start border-4 border-warning">
                         <div class="card-body p-3 d-flex align-items-center justify-content-between">
                             <div>
-                                <span class="text-muted small fw-semibold text-uppercase">Total Peminjaman</span>
+                                <span class="text-muted small fw-semibold text-uppercase">Peminjaman</span>
                                 <h3 class="fw-bold text-dark mb-0 mt-1">{{ $totalPeminjaman ?? 0 }}</h3>
                             </div>
                             <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-circle">
@@ -178,11 +198,11 @@
                 </div>
 
                 <!-- Total Pengembalian -->
-                <div class="col-md-3">
+                <div class="col-md">
                     <div class="card card-stat border-0 shadow-sm border-start border-4 border-success">
                         <div class="card-body p-3 d-flex align-items-center justify-content-between">
                             <div>
-                                <span class="text-muted small fw-semibold text-uppercase">Total Pengembalian</span>
+                                <span class="text-muted small fw-semibold text-uppercase">Pengembalian</span>
                                 <h3 class="fw-bold text-dark mb-0 mt-1">{{ $totalPengembalian ?? 0 }}</h3>
                             </div>
                             <div class="bg-success bg-opacity-10 text-success p-3 rounded-circle">
@@ -193,7 +213,7 @@
                 </div>
 
                 <!-- Total Lokasi -->
-                <div class="col-md-3">
+                <div class="col-md">
                     <div class="card card-stat border-0 shadow-sm border-start border-4 border-info">
                         <div class="card-body p-3 d-flex align-items-center justify-content-between">
                             <div>
@@ -221,6 +241,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th>Aset</th>
+                                <th>Kategori</th>
                                 <th>Peminjam</th>
                                 <th class="text-center">Tgl Pinjam</th>
                                 <th class="text-center">Kondisi Awal</th>
@@ -231,6 +252,12 @@
                             <tr>
                                 <td class="fw-semibold">
                                     {{ $item->aset->nama_barang ?? $item->aset->nama ?? 'Aset ID: '.$item->asset_id }}
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">
+                                        <i class="bi bi-tag me-1 text-secondary"></i>
+                                        {{ $item->aset->kategori->nama_kategori ?? $item->aset->kategori ?? '-' }}
+                                    </span>
                                 </td>
                                 <td>{{ $item->peminjam }}</td>
                                 <td class="text-center">{{ $item->tanggal_pinjam }}</td>
@@ -246,7 +273,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="4" class="text-center text-muted py-4">Belum ada aktivitas peminjaman.</td>
+                                <td colspan="5" class="text-center text-muted py-4">Belum ada aktivitas peminjaman.</td>
                             </tr>
                             @endforelse
                         </tbody>

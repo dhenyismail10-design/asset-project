@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kategori;
 use Illuminate\Http\Request;
 
 class KategoriController extends Controller
@@ -11,7 +12,9 @@ class KategoriController extends Controller
      */
     public function index()
     {
-        //
+        $kategoris = Kategori::latest()->get();
+
+        return view('kategori.index', compact('kategoris'));
     }
 
     /**
@@ -19,7 +22,7 @@ class KategoriController extends Controller
      */
     public function create()
     {
-        //
+        return view('kategori.create');
     }
 
     /**
@@ -27,38 +30,58 @@ class KategoriController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'nama_kategori' => 'required|string|max:255',
+        ]);
+
+        Kategori::create($validated);
+
+        return redirect()
+            ->route('kategori.index')
+            ->with('success', 'Data kategori berhasil ditambahkan.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Kategori $kategori)
     {
-        //
+        return view('kategori.show', compact('kategori'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Kategori $kategori)
     {
-        //
+        return view('kategori.edit', compact('kategori'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Kategori $kategori)
     {
-        //
+        $validated = $request->validate([
+            'nama_kategori' => 'required|string|max:255',
+        ]);
+
+        $kategori->update($validated);
+
+        return redirect()
+            ->route('kategori.index')
+            ->with('success', 'Data kategori berhasil diperbarui.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Kategori $kategori)
     {
-        //
+        $kategori->delete();
+
+        return redirect()
+            ->route('kategori.index')
+            ->with('success', 'Data kategori berhasil dihapus.');
     }
 }

@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AsetController;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\LokasiController;
+use App\Http\Controllers\KategoriController;
 
 
 Route::get('/', function () {
@@ -17,3 +18,4 @@ Route::get('/dashboard', [DashboardController::class, 'index']);
 Route::resource('aset', AsetController::class);
 Route::resource('peminjaman', PeminjamanController::class);
 Route::resource('lokasi', LokasiController::class);
+Route::resource('kategori', KategoriController::class);
