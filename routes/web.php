@@ -6,6 +6,7 @@ use App\Http\Controllers\AsetController;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\PengembalianController;
 
 
 Route::get('/', function () {
@@ -19,3 +20,4 @@ Route::resource('aset', AsetController::class);
 Route::resource('peminjaman', PeminjamanController::class);
 Route::resource('lokasi', LokasiController::class);
 Route::resource('kategori', KategoriController::class);
+Route::resource('pengembalian', PengembalianController::class);

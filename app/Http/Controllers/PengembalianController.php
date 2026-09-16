@@ -2,63 +2,97 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pengembalian;
+use App\Models\Peminjaman;
 use Illuminate\Http\Request;
 
 class PengembalianController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Menampilkan daftar riwayat pengembalian.
      */
     public function index()
     {
-        //
+        // Mengambil data pengembalian beserta relasi peminjaman (jika ada relasi)
+        $pengembalian = Pengembalian::latest()->get();
+
+        return view('pengembalian.index', compact('pengembalian'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Menampilkan form tambah pengembalian.
      */
     public function create()
     {
-        //
+        // Ambil semua data peminjaman
+        $peminjaman = Peminjaman::all();
+
+        return view('pengembalian.create', compact('peminjaman'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Menyimpan data pengembalian baru ke database.
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'peminjaman_id'        => 'required',
+            'tanggal_pengembalian' => 'required|date',
+            'status'               => 'required|string',
+        ]);
+
+        Pengembalian::create([
+            'peminjaman_id'        => $request->peminjaman_id,
+            'tanggal_pengembalian' => $request->tanggal_pengembalian,
+            'status'               => $request->status,
+        ]);
+
+        return redirect()->route('pengembalian.index')
+            ->with('success', 'Data pengembalian berhasil ditambahkan!');
     }
 
     /**
-     * Display the specified resource.
+     * Menampilkan form edit pengembalian.
      */
-    public function show(string $id)
+    public function edit($id)
     {
-        //
+        $pengembalian = Pengembalian::findOrFail($id);
+        $peminjaman = Peminjaman::all();
+
+        return view('pengembalian.edit', compact('pengembalian', 'peminjaman'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Memperbarui data pengembalian di database.
      */
-    public function edit(string $id)
+    public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'peminjaman_id'        => 'required',
+            'tanggal_pengembalian' => 'required|date',
+            'status'               => 'required|string',
+        ]);
+
+        $pengembalian = Pengembalian::findOrFail($id);
+        $pengembalian->update([
+            'peminjaman_id'        => $request->peminjaman_id,
+            'tanggal_pengembalian' => $request->tanggal_pengembalian,
+            'status'               => $request->status,
+        ]);
+
+        return redirect()->route('pengembalian.index')
+            ->with('success', 'Data pengembalian berhasil diperbarui!');
     }
 
     /**
-     * Update the specified resource in storage.
+     * Menghapus data pengembalian dari database.
      */
-    public function update(Request $request, string $id)
+    public function destroy($id)
     {
-        //
-    }
+        $pengembalian = Pengembalian::findOrFail($id);
+        $pengembalian->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return redirect()->route('pengembalian.index')
+            ->with('success', 'Data pengembalian berhasil dihapus!');
     }
 }
