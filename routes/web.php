@@ -8,14 +8,15 @@ use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\PengembalianController;
 
-
+// Redirect URL utama (/) langsung ke Dashboard
 Route::get('/', function () {
-    return redirect()->route('aset.index');
+    return redirect()->route('dashboard');
 });
 
-// Atur halaman utama atau /dashboard ke DashboardController
-Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-Route::get('/dashboard', [DashboardController::class, 'index']);
+// Route Dashboard
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+// Resource Routes
 Route::resource('aset', AsetController::class);
 Route::resource('peminjaman', PeminjamanController::class);
 Route::resource('lokasi', LokasiController::class);

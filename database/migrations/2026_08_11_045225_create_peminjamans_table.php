@@ -10,7 +10,8 @@ return new class extends Migration
     {
         Schema::create('peminjamans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('asset_id')->constrained('aset')->onDelete('cascade');
+            // Disesuaikan ke aset_id dan tabel 'asets' (pilihan aman tanpa foreign constraint ketat)
+            $table->unsignedBigInteger('aset_id');
             $table->string('peminjam');
             $table->date('tanggal_pinjam');
             $table->date('tanggal_kembali')->nullable();

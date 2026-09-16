@@ -9,14 +9,12 @@ class Peminjaman extends Model
 {
     use HasFactory;
 
-    // Tentukan nama tabel yang benar sesuai database
-    protected $table = 'peminjamans'; 
-
-    protected $guarded = [];
+    protected $table = 'peminjamans';
+    protected $guarded = ['id'];
 
     // Relasi ke Model Aset
     public function aset()
     {
-        return $this->belongsTo(Aset::class, 'asset_id');
+        return $this->belongsTo(Aset::class, 'aset_id');
     }
 }

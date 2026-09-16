@@ -1,288 +1,223 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Sistem Manajemen Aset</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <style>
-        body {
-            min-height: 100vh;
-            background-color: #f8f9fa;
-        }
-        /* Layout Flexbox untuk Sidebar & Konten */
-        .wrapper {
-            display: flex;
-            width: 100%;
-            align-items: stretch;
-            min-height: 100vh;
-        }
-        #sidebar {
-            min-width: 260px;
-            max-width: 260px;
-            background: #212529;
-            color: #fff;
-            transition: all 0.3s;
-        }
-        #sidebar .sidebar-header {
-            padding: 20px;
-            background: #1a1d20;
-            border-bottom: 1px solid #2d3238;
-        }
-        #sidebar ul.components {
-            padding: 15px 0;
-        }
-        #sidebar ul p {
-            color: #6c757d;
-            padding: 10px 20px 5px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 0;
-        }
-        #sidebar ul li a {
-            padding: 12px 20px;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            color: #ced4da;
-            text-decoration: none;
-            transition: 0.2s;
-        }
-        #sidebar ul li a:hover, #sidebar ul li a.active {
-            color: #fff;
-            background: #0d6efd;
-        }
-        #sidebar ul li a i {
-            margin-right: 12px;
-            font-size: 1.1rem;
-        }
-        #content {
-            width: 100%;
-            padding: 30px;
-            min-height: 100vh;
-        }
-        .card-stat { transition: transform 0.2s; }
-        .card-stat:hover { transform: translateY(-3px); }
-    </style>
-</head>
-<body>
+@extends('layouts.app')
 
-    <div class="wrapper">
-        <!-- Sidebar Navigation -->
-        <nav id="sidebar">
-            <div class="sidebar-header">
-                <h5 class="fw-bold mb-0 text-white">
-                    <i class="bi bi-box-seam text-primary me-2"></i>Asset Management
-                </h5>
-            </div>
+@section('content')
+<style>
+    /* Metric Card Styling */
+    .metric-card {
+        background: #ffffff;
+        border: 1px solid #f1f5f9;
+        border-radius: 18px;
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
 
-            <ul class="list-unstyled components">
-                <li>
-                    <a href="{{ Route::has('dashboard') ? route('dashboard') : url('/dashboard') }}" class="active">
-                        <i class="bi bi-speedometer2"></i> Dashboard
-                    </a>
-                </li>
+    .metric-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--card-shadow-hover);
+    }
 
-                <!-- Menu Master Aset -->
-                <p>Master Aset</p>
-                <li>
-                    <a href="{{ Route::has('aset.index') ? route('aset.index') : url('/aset') }}">
-                        <i class="bi bi-boxes"></i> Data Aset
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ Route::has('aset.create') ? route('aset.create') : url('/aset/create') }}">
-                        <i class="bi bi-plus-square"></i> Tambah Aset
-                    </a>
-                </li>
+    .metric-icon-box {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+    }
 
-                <!-- Menu Transaksi Peminjaman -->
-                <p>Peminjaman</p>
-                <li>
-                    <a href="{{ Route::has('peminjaman.index') ? route('peminjaman.index') : url('/peminjaman') }}">
-                        <i class="bi bi-journal-text"></i> Riwayat Pinjam
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ Route::has('peminjaman.create') ? route('peminjaman.create') : url('/peminjaman/create') }}">
-                        <i class="bi bi-journal-plus"></i> Form Peminjaman
-                    </a>
-                </li>
+    /* Gradient Backgrounds for Icons */
+    .icon-indigo { background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); color: #4338ca; }
+    .icon-sky { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); color: #0369a1; }
+    .icon-amber { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #b45309; }
+    .icon-emerald { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); color: #047857; }
 
-                <!-- Menu Transaksi Pengembalian -->
-                <p>Pengembalian</p>
-                <li>
-                    <a href="{{ Route::has('pengembalian.index') ? route('pengembalian.index') : url('/pengembalian') }}">
-                        <i class="bi bi-arrow-return-left"></i> Riwayat Kembali
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ Route::has('pengembalian.create') ? route('pengembalian.create') : url('/pengembalian/create') }}">
-                        <i class="bi bi-box-arrow-in-down"></i> Form Pengembalian
-                    </a>
-                </li>
+    /* Custom Table Styling */
+    .custom-table-card {
+        background: #ffffff;
+        border: 1px solid #f1f5f9;
+        border-radius: 18px;
+        box-shadow: var(--card-shadow);
+    }
 
-                <!-- Menu Pengaturan & Master Data -->
-                <p>Pengaturan</p>
-                <li>
-                    <a href="{{ Route::has('kategori.index') ? route('kategori.index') : url('/kategori') }}">
-                        <i class="bi bi-tags"></i> Data Kategori
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ Route::has('lokasi.index') ? route('lokasi.index') : url('/lokasi') }}">
-                        <i class="bi bi-geo-alt"></i> Data Lokasi
-                    </a>
-                </li>
-            </ul>
-        </nav>
+    .custom-table thead th {
+        background-color: #f8fafc;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #64748b;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
 
-        <!-- Main Content Area -->
-        <div id="content">
-            <!-- Header -->
-            <div class="mb-4 d-flex justify-content-between align-items-center">
-                <div>
-                    <h2 class="fw-bold text-dark mb-1">Dashboard</h2>
-                    <p class="text-muted mb-0">Ringkasan status operasional dan statistik aset saat ini.</p>
-                </div>
-            </div>
+    .custom-table tbody td {
+        padding: 1.1rem 1.5rem;
+        color: #334155;
+        font-size: 0.9rem;
+        border-bottom: 1px solid #f8fafc;
+    }
 
-            <!-- Kartu Ringkasan Statistik -->
-            <div class="row g-3 mb-4">
-                <!-- Total Aset -->
-                <div class="col-md">
-                    <div class="card card-stat border-0 shadow-sm border-start border-4 border-primary">
-                        <div class="card-body p-3 d-flex align-items-center justify-content-between">
-                            <div>
-                                <span class="text-muted small fw-semibold text-uppercase">Total Aset</span>
-                                <h3 class="fw-bold text-dark mb-0 mt-1">{{ $totalAset ?? 0 }}</h3>
-                            </div>
-                            <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle">
-                                <i class="bi bi-boxes fs-3"></i>
-                            </div>
-                        </div>
+    .custom-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .custom-table tbody tr {
+        transition: background-color 0.2s ease;
+    }
+
+    .custom-table tbody tr:hover {
+        background-color: #f8fafc;
+    }
+
+    .badge-status {
+        padding: 0.4em 0.8em;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border-radius: 8px;
+        letter-spacing: 0.3px;
+    }
+</style>
+
+<div class="container-fluid p-0">
+    <!-- Page Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pb-2">
+        <div>
+            <h2 class="fw-800 text-slate-900 mb-1" style="font-weight: 800; letter-spacing: -0.5px;">Dashboard Management Aset</h2>
+            <p class="text-muted mb-0 font-medium">Ringkasan real-time statistik data aset dan aktivitas transaksi.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ route('aset.create') }}" class="btn btn-indigo text-white fw-semibold px-4 py-2 rounded-3 shadow-sm" style="background: #4f46e5; border: none;">
+                <i class="bi bi-plus-lg me-1"></i> Tambah Aset Baru
+            </a>
+        </div>
+    </div>
+
+    <!-- Metric Cards Grid -->
+    <div class="row g-4 mb-5">
+        <!-- Total Aset -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card metric-card border-0 p-3">
+                <div class="card-body p-2 d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-uppercase fw-bold text-muted fs-7" style="letter-spacing: 0.5px; font-size: 0.75rem;">Total Aset</span>
+                        <h2 class="fw-bold text-slate-900 mb-0 mt-2" style="font-size: 1.85rem;">{{ $totalAset ?? 0 }}</h2>
                     </div>
-                </div>
-
-                <!-- Total Kategori -->
-                <div class="col-md">
-                    <div class="card card-stat border-0 shadow-sm border-start border-4 border-purple" style="border-color: #6f42c1 !important;">
-                        <div class="card-body p-3 d-flex align-items-center justify-content-between">
-                            <div>
-                                <span class="text-muted small fw-semibold text-uppercase">Kategori</span>
-                                <h3 class="fw-bold text-dark mb-0 mt-1">{{ $totalKategori ?? 0 }}</h3>
-                            </div>
-                            <div class="p-3 rounded-circle" style="background-color: rgba(111, 66, 193, 0.1); color: #6f42c1;">
-                                <i class="bi bi-tags fs-3"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Total Peminjaman -->
-                <div class="col-md">
-                    <div class="card card-stat border-0 shadow-sm border-start border-4 border-warning">
-                        <div class="card-body p-3 d-flex align-items-center justify-content-between">
-                            <div>
-                                <span class="text-muted small fw-semibold text-uppercase">Peminjaman</span>
-                                <h3 class="fw-bold text-dark mb-0 mt-1">{{ $totalPeminjaman ?? 0 }}</h3>
-                            </div>
-                            <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-circle">
-                                <i class="bi bi-journal-arrow-up fs-3"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Total Pengembalian -->
-                <div class="col-md">
-                    <div class="card card-stat border-0 shadow-sm border-start border-4 border-success">
-                        <div class="card-body p-3 d-flex align-items-center justify-content-between">
-                            <div>
-                                <span class="text-muted small fw-semibold text-uppercase">Pengembalian</span>
-                                <h3 class="fw-bold text-dark mb-0 mt-1">{{ $totalPengembalian ?? 0 }}</h3>
-                            </div>
-                            <div class="bg-success bg-opacity-10 text-success p-3 rounded-circle">
-                                <i class="bi bi-journal-arrow-down fs-3"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Total Lokasi -->
-                <div class="col-md">
-                    <div class="card card-stat border-0 shadow-sm border-start border-4 border-info">
-                        <div class="card-body p-3 d-flex align-items-center justify-content-between">
-                            <div>
-                                <span class="text-muted small fw-semibold text-uppercase">Total Lokasi</span>
-                                <h3 class="fw-bold text-dark mb-0 mt-1">{{ $totalLokasi ?? 0 }}</h3>
-                            </div>
-                            <div class="bg-info bg-opacity-10 text-info p-3 rounded-circle">
-                                <i class="bi bi-geo-alt fs-3"></i>
-                            </div>
-                        </div>
+                    <div class="metric-icon-box icon-indigo">
+                        <i class="bi bi-box-seam-fill"></i>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Tabel Aktivitas Peminjaman Terbaru -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between">
-                    <h6 class="fw-bold mb-0 text-dark">
-                        <i class="bi bi-clock-history me-2 text-primary"></i>Peminjaman Terbaru
-                    </h6>
-                    <a href="{{ Route::has('peminjaman.index') ? route('peminjaman.index') : url('/peminjaman') }}" class="btn btn-sm btn-link text-decoration-none">Lihat Semua</a>
+        <!-- Total Kategori -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card metric-card border-0 p-3">
+                <div class="card-body p-2 d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-uppercase fw-bold text-muted fs-7" style="letter-spacing: 0.5px; font-size: 0.75rem;">Total Kategori</span>
+                        <h2 class="fw-bold text-slate-900 mb-0 mt-2" style="font-size: 1.85rem;">{{ $totalKategori ?? 0 }}</h2>
+                    </div>
+                    <div class="metric-icon-box icon-sky">
+                        <i class="bi bi-tags-fill"></i>
+                    </div>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Aset</th>
-                                <th>Kategori</th>
-                                <th>Peminjam</th>
-                                <th class="text-center">Tgl Pinjam</th>
-                                <th class="text-center">Kondisi Awal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($peminjamanTerbaru ?? [] as $item)
-                            <tr>
-                                <td class="fw-semibold">
-                                    {{ $item->aset->nama_barang ?? $item->aset->nama ?? 'Aset ID: '.$item->asset_id }}
-                                </td>
-                                <td>
-                                    <span class="badge bg-light text-dark border">
-                                        <i class="bi bi-tag me-1 text-secondary"></i>
-                                        {{ $item->aset->kategori->nama_kategori ?? $item->aset->kategori ?? '-' }}
-                                    </span>
-                                </td>
-                                <td>{{ $item->peminjam }}</td>
-                                <td class="text-center">{{ $item->tanggal_pinjam }}</td>
-                                <td class="text-center">
-                                    @if($item->kondisi_awal == 'Baik')
-                                        <span class="badge bg-success">Baik</span>
-                                    @elseif($item->kondisi_awal == 'Rusak Ringan')
-                                        <span class="badge bg-warning text-dark">Rusak Ringan</span>
-                                    @else
-                                        <span class="badge bg-danger">Rusak Berat</span>
-                                    @endif
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="5" class="text-center text-muted py-4">Belum ada aktivitas peminjaman.</td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+            </div>
+        </div>
+
+        <!-- Peminjaman Active -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card metric-card border-0 p-3">
+                <div class="card-body p-2 d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-uppercase fw-bold text-muted fs-7" style="letter-spacing: 0.5px; font-size: 0.75rem;">Peminjaman</span>
+                        <h2 class="fw-bold text-slate-900 mb-0 mt-2" style="font-size: 1.85rem;">{{ $totalPeminjaman ?? 0 }}</h2>
+                    </div>
+                    <div class="metric-icon-box icon-amber">
+                        <i class="bi bi-arrow-left-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pengembalian -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card metric-card border-0 p-3">
+                <div class="card-body p-2 d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-uppercase fw-bold text-muted fs-7" style="letter-spacing: 0.5px; font-size: 0.75rem;">Pengembalian</span>
+                        <h2 class="fw-bold text-slate-900 mb-0 mt-2" style="font-size: 1.85rem;">{{ $totalPengembalian ?? 0 }}</h2>
+                    </div>
+                    <div class="metric-icon-box icon-emerald">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    <!-- Table Section -->
+    <div class="custom-table-card">
+        <div class="p-4 d-flex justify-content-between align-items-center border-bottom border-light">
+            <div>
+                <h5 class="fw-bold text-slate-900 mb-0">Peminjaman Terbaru</h5>
+                <small class="text-muted">Aktivitas transaksi peminjaman barang ter-update.</small>
+            </div>
+            <a href="{{ route('peminjaman.index') }}" class="btn btn-sm btn-light text-indigo fw-semibold px-3 py-2 rounded-3" style="color: #4f46e5; background: #e0e7ff;">
+                Lihat Semua <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+        <div class="table-responsive">
+            <table class="table custom-table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Peminjam</th>
+                        <th>Nama Aset</th>
+                        <th>Kategori</th>
+                        <th>Tanggal Pinjam</th>
+                        <th class="text-end">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($peminjamanTerbaru as $item)
+                        <tr>
+                            <td>
+                                <div class="fw-semibold text-slate-900">{{ $item->peminjam ?? '-' }}</div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-box text-muted"></i>
+                                    <span>{{ $item->aset->nama_aset ?? '-' }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark border px-2 py-1 font-medium">{{ $item->aset->kategori->nama_kategori ?? '-' }}</span>
+                            </td>
+                            <td class="text-muted">
+                                <i class="bi bi-calendar-event me-1"></i>
+                                {{ $item->tanggal_pinjam ? \Carbon\Carbon::parse($item->tanggal_pinjam)->format('d M Y') : '-' }}
+                            </td>
+                            <td class="text-end">
+                                <span class="badge badge-status bg-warning bg-opacity-10 text-warning border border-warning border-opacity-20">
+                                    {{ $item->status ?? 'Dipinjam' }}
+                                </span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <div class="py-3">
+                                    <i class="bi bi-inbox fs-1 text-muted opacity-50 d-block mb-2"></i>
+                                    <span class="text-muted fw-medium">Belum ada transaksi peminjaman terbaru.</span>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@endsection

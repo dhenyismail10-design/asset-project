@@ -34,8 +34,8 @@
     <!-- Header Halaman -->
     <div class="d-flex align-items-center justify-content-between mb-4">
         <div>
-            <h2 class="fw-800 text-slate-900 mb-1" style="font-weight: 800; letter-spacing: -0.5px;">Tambah Pengembalian Aset</h2>
-            <p class="text-muted mb-0 font-medium">Isi formulir di bawah ini untuk mencatat transaksi pengembalian.</p>
+            <h2 class="fw-800 text-slate-900 mb-1" style="font-weight: 800; letter-spacing: -0.5px;">Edit Pengembalian Aset</h2>
+            <p class="text-muted mb-0 font-medium">Perbarui rincian data transaksi pengembalian aset.</p>
         </div>
         <a href="{{ route('pengembalian.index') }}" class="btn btn-light border fw-semibold px-3 py-2 rounded-3">
             <i class="bi bi-arrow-left me-1"></i> Kembali
@@ -62,8 +62,9 @@
                 </div>
             @endif
 
-            <form action="{{ route('pengembalian.store') }}" method="POST">
+            <form action="{{ route('pengembalian.update', $pengembalian->id) }}" method="POST">
                 @csrf
+                @method('PUT')
 
                 <!-- ID / Transaksi Peminjaman -->
                 <div class="mb-3">
@@ -75,7 +76,7 @@
                         <select name="peminjaman_id" id="peminjaman_id" class="form-select border-start-0 @error('peminjaman_id') is-invalid @enderror" style="border-radius: 0 10px 10px 0;" required>
                             <option value="" hidden>-- Pilih Peminjaman --</option>
                             @foreach ($peminjaman as $item)
-                                <option value="{{ $item->id }}" {{ old('peminjaman_id') == $item->id ? 'selected' : '' }}>
+                                <option value="{{ $item->id }}" {{ old('peminjaman_id', $pengembalian->peminjaman_id) == $item->id ? 'selected' : '' }}>
                                     #{{ $item->id }} - {{ $item->peminjam ?? $item->nama_peminjam ?? 'Peminjaman #' . $item->id }} 
                                     @if(isset($item->asset->nama_barang) || isset($item->asset->nama))
                                         ({{ $item->asset->nama_barang ?? $item->asset->nama }})
@@ -98,7 +99,7 @@
                         </span>
                         <input type="date" name="tanggal_pengembalian" id="tanggal_pengembalian" 
                             class="form-control border-start-0 @error('tanggal_pengembalian') is-invalid @enderror" style="border-radius: 0 10px 10px 0;"
-                            value="{{ old('tanggal_pengembalian', date('Y-m-d')) }}" required>
+                            value="{{ old('tanggal_pengembalian', $pengembalian->tanggal_pengembalian) }}" required>
                     </div>
                     @error('tanggal_pengembalian')
                         <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -113,9 +114,9 @@
                             <i class="bi bi-info-circle"></i>
                         </span>
                         <select name="status" id="status" class="form-select border-start-0 @error('status') is-invalid @enderror" style="border-radius: 0 10px 10px 0;" required>
-                            <option value="Selesai" {{ old('status') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
-                            <option value="Dikembalikan" {{ old('status') == 'Dikembalikan' ? 'selected' : '' }}>Dikembalikan</option>
-                            <option value="Terlambat" {{ old('status') == 'Terlambat' ? 'selected' : '' }}>Terlambat</option>
+                            <option value="Selesai" {{ old('status', $pengembalian->status) == 'Selesai' ? 'selected' : '' }}>Selesai</option>
+                            <option value="Dikembalikan" {{ old('status', $pengembalian->status) == 'Dikembalikan' ? 'selected' : '' }}>Dikembalikan</option>
+                            <option value="Terlambat" {{ old('status', $pengembalian->status) == 'Terlambat' ? 'selected' : '' }}>Terlambat</option>
                         </select>
                     </div>
                     @error('status')
@@ -128,8 +129,8 @@
                 <!-- Tombol Aksi -->
                 <div class="d-flex justify-content-end gap-2">
                     <a href="{{ route('pengembalian.index') }}" class="btn btn-light fw-semibold px-4 py-2 rounded-3" style="border: 1px solid #cbd5e1;">Batal</a>
-                    <button type="submit" class="btn btn-indigo text-white fw-semibold px-4 py-2 rounded-3 shadow-sm" style="background: #4f46e5; border: none;">
-                        <i class="bi bi-check-lg me-1"></i> Simpan Pengembalian
+                    <button type="submit" class="btn btn-warning text-white fw-semibold px-4 py-2 rounded-3 shadow-sm" style="background: #f59e0b; border: none;">
+                        <i class="bi bi-check-lg me-1"></i> Perbarui Data
                     </button>
                 </div>
             </form>

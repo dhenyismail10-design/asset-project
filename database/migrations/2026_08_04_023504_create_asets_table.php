@@ -6,29 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('aset', function (Blueprint $table) {
-            $table->id();
-            $table->string('kode_barang', 20);
-            $table->string('nama_barang', 100);
-            $table->string('kondisi', 20)->default('Baik')->nullable();
-            $table->string('lokasi', 50)->nullable();
-            $table->timestamps();
-
-            // Foreign key relasi ke tabel kategori (opsional jika tabel kategori ada)
-            // $table->foreign('kategori_id')->references('id')->on('kategori')->onDelete('cascade');
-        });
+        Schema::create('asets', function (Blueprint $table) {
+    $table->id();
+    $table->string('kode_barang')->nullable();
+    $table->string('nama_aset');
+    $table->string('kondisi')->default('Baik');
+    $table->string('lokasi')->nullable();
+    $table->unsignedBigInteger('kategori_id')->nullable();
+    $table->unsignedBigInteger('lokasi_id')->nullable();
+    $table->integer('jumlah')->default(1);
+    $table->string('status')->default('Tersedia');
+    $table->timestamps();
+});
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('aset');
+        Schema::dropIfExists('asets');
     }
 };

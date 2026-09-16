@@ -22,38 +22,40 @@ class PeminjamanController extends Controller
      * Menampilkan form peminjaman aset.
      */
     public function create()
-{
-    // Mengambil semua aset yang ada di database
-    $assets = \App\Models\Aset::all();
+    {
+        $assets = Aset::all();
+        return view('peminjaman.create', compact('assets'));
+    }
 
-    return view('peminjaman.create', compact('assets'));
-}
     /**
      * Menyimpan data peminjaman ke database.
      */
     public function store(Request $request)
     {
-            $request->validate([
-    'asset_id'        => 'required|exists:aset,id',
-    'peminjam'        => 'required|string|max:255',
-    'tanggal_pinjam'  => 'required|date',
-    'tanggal_kembali' => 'nullable|date|after_or_equal:tanggal_pinjam',
-    'kondisi_awal'    => 'required|in:Baik,Rusak Ringan,Rusak Berat', // <-- Pastikan 'Rusak Berat' tercantum di sini
-]);
+        $request->validate([
+            'asset_id'        => ['required', 'exists:'.Aset::class.',id'],
+            'peminjam'        => 'required|string|max:255',
+            'tanggal_pinjam'  => 'required|date',
+            'tanggal_kembali' => 'nullable|date|after_or_equal:tanggal_pinjam',
+            'kondisi_awal'    => 'required|in:Baik,Rusak Ringan,Rusak Berat',
+            'bukti_pinjam'    => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
 
         $data = $request->all();
+
+        // Map input 'asset_id' ke kolom 'aset_id'
+        $data['aset_id'] = $request->asset_id;
 
         // Proses Upload File/Bukti jika ada
         if ($request->hasFile('bukti_pinjam')) {
             $data['bukti_pinjam'] = $request->file('bukti_pinjam')->store('bukti_peminjaman', 'public');
         }
 
-        // Simpan data transaksi ke tabel peminjaman
+        // Simpan data
         Peminjaman::create($data);
 
         return redirect()->route('peminjaman.index')->with('success', 'Transaksi peminjaman aset berhasil disimpan!');
     }
-
     /**
      * Menghapus/Membatalkan data peminjaman.
      */

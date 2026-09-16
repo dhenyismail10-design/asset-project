@@ -9,8 +9,7 @@ class AsetController extends Controller
 {
     public function index()
     {
-        // Mengambil semua data aset
-        $asets = Aset::all();
+        $asets = Aset::latest()->get();
         return view('aset.index', compact('asets'));
     }
 
@@ -21,18 +20,17 @@ class AsetController extends Controller
 
     public function store(Request $request)
     {
-        // 1. Validasi input dari form
         $request->validate([
             'kode_barang' => 'required',
             'nama_barang' => 'required',
             'kondisi'     => 'required',
-            'lokasi'      => 'required',
+            'lokasi'      => 'nullable',
         ]);
 
-        // 2. Simpan data ke database
+        // Simpan ke database dengan memetakan nama_barang -> nama_aset
         Aset::create([
             'kode_barang' => $request->kode_barang,
-            'nama_barang' => $request->nama_barang,
+            'nama_aset'   => $request->nama_barang, // Disamakan dengan kolom di database
             'kondisi'     => $request->kondisi,
             'lokasi'      => $request->lokasi,
         ]);

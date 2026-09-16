@@ -1,220 +1,145 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Kategori - Asset Management</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <style>
-        body {
-            min-height: 100vh;
-            background-color: #f8f9fa;
-        }
-        .wrapper {
-            display: flex;
-            width: 100%;
-            align-items: stretch;
-            min-height: 100vh;
-        }
-        #sidebar {
-            min-width: 260px;
-            max-width: 260px;
-            background: #212529;
-            color: #fff;
-            transition: all 0.3s;
-        }
-        #sidebar .sidebar-header {
-            padding: 20px;
-            background: #1a1d20;
-            border-bottom: 1px solid #2d3238;
-        }
-        #sidebar ul.components {
-            padding: 15px 0;
-        }
-        #sidebar ul p {
-            color: #6c757d;
-            padding: 10px 20px 5px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 0;
-        }
-        #sidebar ul li a {
-            padding: 12px 20px;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            color: #ced4da;
-            text-decoration: none;
-            transition: 0.2s;
-        }
-        #sidebar ul li a:hover, #sidebar ul li a.active {
-            color: #fff;
-            background: #0d6efd;
-        }
-        #sidebar ul li a i {
-            margin-right: 12px;
-            font-size: 1.1rem;
-        }
-        #content {
-            width: 100%;
-            padding: 30px;
-            min-height: 100vh;
-        }
-    </style>
-</head>
-<body>
+@extends('layouts.app')
 
-    <div class="wrapper">
-        <!-- Sidebar Navigation -->
-        <nav id="sidebar">
-            <div class="sidebar-header">
-                <h5 class="fw-bold mb-0 text-white">
-                    <i class="bi bi-box-seam text-primary me-2"></i>Asset Management
-                </h5>
-            </div>
+@section('content')
+<style>
+    /* Table Wrapper Card */
+    .custom-table-card {
+        background: #ffffff;
+        border: 1px solid #f1f5f9;
+        border-radius: 18px;
+        box-shadow: var(--card-shadow);
+        overflow: hidden;
+    }
 
-            <ul class="list-unstyled components">
-                <li>
-                    <a href="{{ url('/dashboard') }}">
-                        <i class="bi bi-speedometer2"></i> Dashboard
-                    </a>
-                </li>
+    .custom-table thead th {
+        background-color: #f8fafc;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #64748b;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
 
-                <!-- Menu Master Aset -->
-                <p>Master Aset</p>
-                <li>
-                    <a href="{{ Route::has('aset.index') ? route('aset.index') : url('/aset') }}">
-                        <i class="bi bi-boxes"></i> Data Aset
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ Route::has('aset.create') ? route('aset.create') : url('/aset/create') }}">
-                        <i class="bi bi-plus-square"></i> Tambah Aset
-                    </a>
-                </li>
+    .custom-table tbody td {
+        padding: 1.1rem 1.5rem;
+        color: #334155;
+        font-size: 0.9rem;
+        border-bottom: 1px solid #f8fafc;
+    }
 
-                <!-- Menu Transaksi Peminjaman -->
-                <p>Peminjaman</p>
-                <li>
-                    <a href="{{ Route::has('peminjaman.index') ? route('peminjaman.index') : url('/peminjaman') }}">
-                        <i class="bi bi-journal-text"></i> Riwayat Pinjam
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ Route::has('peminjaman.create') ? route('peminjaman.create') : url('/peminjaman/create') }}">
-                        <i class="bi bi-journal-plus"></i> Form Peminjaman
-                    </a>
-                </li>
+    .custom-table tbody tr:last-child td {
+        border-bottom: none;
+    }
 
-                <!-- Menu Transaksi Pengembalian -->
-                <p>Pengembalian</p>
-                <li>
-                    <a href="{{ Route::has('pengembalian.index') ? route('pengembalian.index') : url('/pengembalian') }}">
-                        <i class="bi bi-arrow-return-left"></i> Riwayat Kembali
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ Route::has('pengembalian.create') ? route('pengembalian.create') : url('/pengembalian/create') }}">
-                        <i class="bi bi-box-arrow-in-down"></i> Form Pengembalian
-                    </a>
-                </li>
+    .custom-table tbody tr {
+        transition: background-color 0.2s ease;
+    }
 
-                <!-- Menu Pengaturan & Master Data -->
-                <p>Pengaturan</p>
-                <li>
-                    <a href="{{ Route::has('kategori.index') ? route('kategori.index') : url('/kategori') }}" class="active">
-                        <i class="bi bi-tags"></i> Data Kategori
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ Route::has('lokasi.index') ? route('lokasi.index') : url('/lokasi') }}">
-                        <i class="bi bi-geo-alt"></i> Data Lokasi
-                    </a>
-                </li>
-            </ul>
-        </nav>
+    .custom-table tbody tr:hover {
+        background-color: #f8fafc;
+    }
 
-        <!-- Main Content Area -->
-        <div id="content">
-            
-            <!-- Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h2 class="fw-bold text-dark mb-1">
-                        <i class="bi bi-tags me-2 text-primary"></i>Data Kategori
-                    </h2>
-                    <p class="text-muted mb-0">Kelola dan kelompokkan kategori aset inventaris secara rapi.</p>
-                </div>
-                <div>
-                    <a href="{{ Route::has('kategori.create') ? route('kategori.create') : url('/kategori/create') }}" class="btn btn-primary fw-semibold">
-                        <i class="bi bi-plus-lg me-1"></i> Tambah Kategori
-                    </a>
-                </div>
-            </div>
+    .btn-action {
+        width: 34px;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
 
-            <!-- Alert Sukses -->
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show mb-4">
-                    <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            @endif
+    .btn-action-edit {
+        background-color: #fef3c7;
+        color: #d97706;
+    }
 
-            <!-- Tabel Data Kategori -->
-            <div class="card border-0 shadow-sm">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover align-middle mb-0">
-                        <thead class="table-light text-uppercase">
-                            <tr>
-                                <th class="py-3 px-3 text-center" width="80">NO</th>
-                                <th class="py-3 px-3">NAMA KATEGORI</th>
-                                <th class="py-3 px-3 text-center" width="160">AKSI</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($kategoris as $kategori)
-                            <tr>
-                                <td class="py-3 px-3 text-center fw-bold text-muted">{{ $loop->iteration }}</td>
-                                <td class="py-3 px-3 fw-bold text-dark">
-                                    <span class="badge bg-light text-dark border px-2 py-1 me-2">
-                                        <i class="bi bi-tag text-secondary"></i>
-                                    </span>
-                                    {{ $kategori->nama_kategori }}
-                                </td>
-                                <td class="py-3 px-3 text-center">
-                                    <a href="{{ Route::has('kategori.show') ? route('kategori.show', $kategori->id) : url('/kategori/'.$kategori->id) }}" class="btn btn-outline-info border-0 btn-sm me-1" title="Detail">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                    <a href="{{ Route::has('kategori.edit') ? route('kategori.edit', $kategori->id) : url('/kategori/'.$kategori->id.'/edit') }}" class="btn btn-outline-warning border-0 btn-sm me-1" title="Edit">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </a>
-                                    <form action="{{ Route::has('kategori.destroy') ? route('kategori.destroy', $kategori->id) : url('/kategori/'.$kategori->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-outline-danger border-0 btn-sm" title="Hapus">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="3" class="text-center text-muted py-5">
-                                    Belum ada data kategori yang tersimpan.
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+    .btn-action-edit:hover {
+        background-color: #fde68a;
+        color: #b45309;
+    }
 
+    .btn-action-delete {
+        background-color: #fee2e2;
+        color: #dc2626;
+    }
+
+    .btn-action-delete:hover {
+        background-color: #fca5a5;
+        color: #991b1b;
+    }
+</style>
+
+<div class="container-fluid p-0">
+    <!-- Header Halaman -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pb-2">
+        <div>
+            <h2 class="fw-800 text-slate-900 mb-1" style="font-weight: 800; letter-spacing: -0.5px;">Data Kategori</h2>
+            <p class="text-muted mb-0 font-medium">Kelola kelompok dan kategori pengelompokan aset inventaris.</p>
+        </div>
+        <div>
+            <a href="{{ Route::has('kategori.create') ? route('kategori.create') : url('/kategori/create') }}" class="btn btn-indigo text-white fw-semibold px-4 py-2 rounded-3 shadow-sm" style="background: #4f46e5; border: none;">
+                <i class="bi bi-plus-lg me-1"></i> Tambah Kategori
+            </a>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    <!-- Tabel Data Kategori -->
+    <div class="custom-table-card">
+        <div class="table-responsive">
+            <table class="table custom-table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th class="text-center" width="8%">NO</th>
+                        <th>NAMA KATEGORI</th>
+                        <th class="text-center" width="15%">AKSI</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($kategori as $key => $item)
+                        <tr>
+                            <td class="text-center fw-bold text-muted">
+                                {{ method_exists($kategori, 'firstItem') ? $kategori->firstItem() + $key : $key + 1 }}
+                            </td>
+                            <td>
+                                <div class="fw-semibold text-slate-900">{{ $item->nama_kategori ?? $item->nama }}</div>
+                            </td>
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a href="{{ Route::has('kategori.edit') ? route('kategori.edit', $item->id) : url('/kategori/'.$item->id.'/edit') }}" class="btn btn-action btn-action-edit" title="Edit Data">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <form action="{{ Route::has('kategori.destroy') ? route('kategori.destroy', $item->id) : url('/kategori/'.$item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-action btn-action-delete" title="Hapus Data">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="3" class="text-center py-5">
+                                <div class="py-3">
+                                    <i class="bi bi-tags fs-1 text-muted opacity-50 d-block mb-2"></i>
+                                    <span class="text-muted fw-medium">Belum ada data kategori yang tersimpan.</span>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        @if(method_exists($kategori, 'hasPages') && $kategori->hasPages())
+            <div class="card-footer bg-white py-3 border-0">
+                {{ $kategori->links() }}
+            </div>
+        @endif
+    </div>
+</div>
+@endsection

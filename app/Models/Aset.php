@@ -2,17 +2,21 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Aset extends Model
 {
-    protected $table = 'aset';
-    public $timestamps = false; // Mematikan pencarian created_at/updated_at
+    use HasFactory;
 
-    protected $fillable = [
-        'kode_barang',
-        'nama_barang',
-        'kondisi',
-        'lokasi'
-    ];
+    protected $guarded = [];
+
+    /**
+     * Relasi ke model Kategori
+     */
+    public function kategori()
+    {
+        // Sesuaikan 'kategori_id' dengan nama foreign key di tabel asets/aset Anda
+        return $this->belongsTo(Kategori::class, 'kategori_id'); 
+    }
 }
