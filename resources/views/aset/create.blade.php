@@ -35,7 +35,7 @@
     <div class="d-flex align-items-center justify-content-between mb-4">
         <div>
             <h2 class="fw-800 text-slate-900 mb-1" style="font-weight: 800; letter-spacing: -0.5px;">Tambah Aset Baru</h2>
-            <p class="text-muted mb-0 font-medium">Isi formulir berikut untuk menambahkan inventaris aset ke dalam sistem.</p>
+            <p class="text-muted mb-0 font-medium">Masukkan rincian informasi aset baru ke dalam sistem inventaris.</p>
         </div>
         <a href="{{ Route::has('aset.index') ? route('aset.index') : url('/aset') }}" class="btn btn-light border fw-semibold px-3 py-2 rounded-3">
             <i class="bi bi-arrow-left me-1"></i> Kembali
@@ -54,7 +54,7 @@
                         <label class="form-label">Kode Barang <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 10px 0 0 10px;"><i class="bi bi-qr-code"></i></span>
-                            <input type="text" name="kode_barang" class="form-control border-start-0 @error('kode_barang') is-invalid @enderror" style="border-radius: 0 10px 10px 0;" placeholder="Contoh: AST-001" value="{{ old('kode_barang') }}" required>
+                            <input type="text" name="kode_barang" class="form-control border-start-0 @error('kode_barang') is-invalid @enderror" style="border-radius: 0 10px 10px 0;" value="{{ old('kode_barang') }}" placeholder="Contoh: AST-001" required>
                         </div>
                         @error('kode_barang')
                             <small class="text-danger mt-1 d-block">{{ $message }}</small>
@@ -66,33 +66,26 @@
                         <label class="form-label">Nama Barang <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 10px 0 0 10px;"><i class="bi bi-box-seam"></i></span>
-                            <input type="text" name="nama_aset" class="form-control border-start-0 @error('nama_aset') is-invalid @enderror" style="border-radius: 0 10px 10px 0;" placeholder="Contoh: Laptop ThinkPad" value="{{ old('nama_aset', old('nama_barang')) }}" required>
+                            <input type="text" name="nama_aset" class="form-control border-start-0 @error('nama_aset') is-invalid @enderror" style="border-radius: 0 10px 10px 0;" value="{{ old('nama_aset') }}" placeholder="Contoh: Laptop Dell XPS 13" required>
                         </div>
                         @error('nama_aset')
                             <small class="text-danger mt-1 d-block">{{ $message }}</small>
                         @enderror
                     </div>
 
-                    <!-- Dropdown Kategori Aset (Baru Ditambahkan) -->
+                    <!-- Kategori Aset (Dropdown) -->
                     <div class="col-md-6 mb-2">
                         <label class="form-label">Kategori Aset <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 10px 0 0 10px;"><i class="bi bi-tags"></i></span>
                             <select name="kategori_id" class="form-select border-start-0 @error('kategori_id') is-invalid @enderror" style="border-radius: 0 10px 10px 0;" required>
                                 <option value="" disabled selected>-- Pilih Kategori --</option>
-                                @if(isset($kategori) && count($kategori) > 0)
-                                    @foreach($kategori as $kat)
-                                        <option value="{{ $kat->id }}" {{ old('kategori_id') == $kat->id ? 'selected' : '' }}>
-                                            {{ $kat->nama_kategori ?? $kat->nama }}
-                                        </option>
-                                    @endforeach
-                                @elseif(isset($categories) && count($categories) > 0)
-                                    @foreach($categories as $kat)
-                                        <option value="{{ $kat->id }}" {{ old('kategori_id') == $kat->id ? 'selected' : '' }}>
-                                            {{ $kat->nama_kategori ?? $kat->nama }}
-                                        </option>
-                                    @endforeach
-                                @endif
+                                @php $listKategori = $kategori ?? $categories ?? []; @endphp
+                                @foreach($listKategori as $kat)
+                                    <option value="{{ $kat->id }}" {{ old('kategori_id') == $kat->id ? 'selected' : '' }}>
+                                        {{ $kat->nama_kategori ?? $kat->nama }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
                         @error('kategori_id')
@@ -114,13 +107,24 @@
                         @enderror
                     </div>
 
-                    <!-- Lokasi -->
+                    <!-- Lokasi Aset (Dropdown) -->
                     <div class="col-md-12 mb-3">
-                        <label class="form-label">Lokasi</label>
+                        <label class="form-label">Lokasi Aset <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 10px 0 0 10px;"><i class="bi bi-geo-alt"></i></span>
-                            <input type="text" name="lokasi" class="form-control border-start-0" style="border-radius: 0 10px 10px 0;" placeholder="Contoh: Lab Komputer 1" value="{{ old('lokasi') }}">
+                            <select name="lokasi_id" class="form-select border-start-0 @error('lokasi_id') is-invalid @enderror" style="border-radius: 0 10px 10px 0;" required>
+                                <option value="" disabled selected>-- Pilih Lokasi --</option>
+                                @php $listLokasi = $lokasi ?? $locations ?? []; @endphp
+                                @foreach($listLokasi as $lok)
+                                    <option value="{{ $lok->id }}" {{ old('lokasi_id') == $lok->id ? 'selected' : '' }}>
+                                        {{ $lok->nama_lokasi ?? $lok->nama }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
+                        @error('lokasi_id')
+                            <small class="text-danger mt-1 d-block">{{ $message }}</small>
+                        @enderror
                     </div>
                 </div>
 
@@ -129,7 +133,7 @@
                 <div class="d-flex justify-content-end gap-2">
                     <a href="{{ Route::has('aset.index') ? route('aset.index') : url('/aset') }}" class="btn btn-light fw-semibold px-4 py-2 rounded-3" style="border: 1px solid #cbd5e1;">Batal</a>
                     <button type="submit" class="btn btn-indigo text-white fw-semibold px-4 py-2 rounded-3 shadow-sm" style="background: #4f46e5; border: none;">
-                        <i class="bi bi-check-lg me-1"></i> Simpan Data
+                        <i class="bi bi-plus-lg me-1"></i> Simpan Data
                     </button>
                 </div>
             </form>

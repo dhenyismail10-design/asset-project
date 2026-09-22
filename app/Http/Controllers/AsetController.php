@@ -4,64 +4,79 @@ namespace App\Http\Controllers;
 
 use App\Models\Aset;
 use App\Models\Kategori;
+use App\Models\Lokasi;
 use Illuminate\Http\Request;
 
 class AsetController extends Controller
 {
     public function index()
-    {
-    $aset = Aset::with('kategori')->latest()->get(); 
+{
+    
+    $aset = Aset::with(['kategori', 'lokasi'])->latest()->get();
+
     return view('aset.index', compact('aset'));
-    }
+}
 
     public function create()
     {
-        $categories = Kategori::all(); 
-    return view('aset.create', compact('categories'));
+        $kategori = Kategori::all();
+        $lokasi = Lokasi::all();
+        return view('aset.create', compact('kategori', 'lokasi'));
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
+{
+    $request->validate([
         'kode_barang' => 'required|string|max:255',
         'nama_aset'   => 'required|string|max:255',
-        'kategori_id' => 'required|exists:kategoris,id', // Validasi kategori
+        'kategori_id' => 'required|exists:kategoris,id',
         'kondisi'     => 'required|string',
-        'lokasi'      => 'nullable|string',
+        'lokasi_id'   => 'required|exists:lokasis,id',
     ]);
 
-    Aset::create($request->all());
+    // Ambil data hanya field yang valid sesuai struktur tabel
+    Aset::create([
+        'kode_barang' => $request->kode_barang,
+        'nama_aset'   => $request->nama_aset ?? $request->nama_barang,
+        'kategori_id' => $request->kategori_id,
+        'kondisi'     => $request->kondisi,
+        'lokasi_id'   => $request->lokasi_id,
+    ]);
 
     return redirect()->route('aset.index')->with('success', 'Data aset berhasil ditambahkan!');
-    }
+} 
 
     public function edit($id)
     {
         $aset = Aset::findOrFail($id);
-        return view('aset.edit', compact('aset'));
+        $kategori = Kategori::all();
+        $lokasi = Lokasi::all();
+
+        return view('aset.edit', compact('aset', 'kategori', 'lokasi'));
     }
 
     public function update(Request $request, $id)
-    {
-        // 1. Validasi input
-        $request->validate([
-            'kode_barang' => 'required',
-            'nama_barang' => 'required',
-            'kondisi'     => 'required',
-            'lokasi'      => 'required',
-        ]);
+{
+    $request->validate([
+        'kode_barang' => 'required|string|max:255',
+        'nama_aset'   => 'required|string|max:255',
+        'kategori_id' => 'required|exists:kategoris,id',
+        'kondisi'     => 'required|string',
+        'lokasi_id'   => 'required|exists:lokasis,id',
+    ]);
 
-        // 2. Update data
-        $aset = Aset::findOrFail($id);
-        $aset->update([
-            'kode_barang' => $request->kode_barang,
-            'nama_barang' => $request->nama_barang,
-            'kondisi'     => $request->kondisi,
-            'lokasi'      => $request->lokasi,
-        ]);
+    $aset = Aset::findOrFail($id);
+    
+    $aset->update([
+        'kode_barang' => $request->kode_barang,
+        'nama_aset'   => $request->nama_aset ?? $request->nama_barang,
+        'kategori_id' => $request->kategori_id,
+        'kondisi'     => $request->kondisi,
+        'lokasi_id'   => $request->lokasi_id,
+    ]);
 
-        return redirect()->route('aset.index')->with('success', 'Data aset berhasil diubah!');
-    }
+    return redirect()->route('aset.index')->with('success', 'Data aset berhasil diperbarui!');
+}
 
     public function destroy($id)
     {

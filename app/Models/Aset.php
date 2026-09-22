@@ -9,15 +9,21 @@ class Aset extends Model
 {
     use HasFactory;
 
-    protected $table = 'asets'; // Menyesuaikan nama tabel di HeidiSQL
-    protected $guarded = [];
+    protected $fillable = [
+    'kode_barang',
+    'nama_aset',
+    'kategori_id',
+    'kondisi',
+    'lokasi_id',
+];
 
-    /**
-     * Relasi ke Model Kategori
-     */
-    // Di app/Models/Aset.php
     public function kategori()
     {
         return $this->belongsTo(Kategori::class, 'kategori_id');
+    }
+
+    public function lokasi()
+    {
+        return $this->belongsTo(Lokasi::class, 'lokasi_id');
     }
 }

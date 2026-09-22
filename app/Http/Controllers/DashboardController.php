@@ -11,21 +11,26 @@ use App\Models\Kategori;
 class DashboardController extends Controller
 {
         public function index()
-        {
-            $totalAset = Aset::count();
-            $totalKategori = Kategori::count();
-            $totalPeminjaman = Peminjaman::count();
-            $totalPengembalian = Pengembalian::count();
+{
+    $totalAset = \App\Models\Aset::count();
+    $totalKategori = \App\Models\Kategori::count();
+    
+    // MENGHILANGKAN WHERE('STATUS') AGAR TIDAK ERROR
+    $totalPeminjaman = \App\Models\Peminjaman::count();
+    $totalPengembalian = \App\Models\Pengembalian::count();
 
-            // TAMBAHKAN with('aset.kategori') DI SINI:
-            $peminjamanTerbaru = Peminjaman::with(['aset.kategori'])->latest()->take(5)->get();
+    // MEMANGGIL RELASI ASET, LOKASI, DAN KATEGORI DENGAN BENAR
+    $peminjamanTerbaru = \App\Models\Peminjaman::with(['aset.lokasi', 'aset.kategori'])
+                        ->latest()
+                        ->take(5)
+                        ->get();
 
-            return view('dashboard', compact(
-                'totalAset', 
-                'totalKategori', 
-                'totalPeminjaman', 
-                'totalPengembalian', 
-                'peminjamanTerbaru'
-            ));
-        }
+    return view('dashboard', compact(
+        'totalAset', 
+        'totalKategori', 
+        'totalPeminjaman', 
+        'totalPengembalian', 
+        'peminjamanTerbaru'
+    ));
+}
 }

@@ -189,12 +189,26 @@
                             <td>
                                 <div class="d-flex align-items-center gap-2">
                                     <i class="bi bi-box text-muted"></i>
-                                    <span>{{ $item->aset->nama_barang ?? $item->aset->nama_aset ?? $item->aset->nama ?? '-' }}</span>
+                                    <div>
+                                        <div class="fw-semibold text-slate-900">
+                                            {{ optional($item->aset)->nama_barang ?? optional($item->aset)->nama_aset ?? optional($item->aset)->nama ?? '-' }}
+                                        </div>
+
+                                        <!-- TAMPILAN LOKASI ASET AMAN -->
+                                        <small class="text-muted d-block mt-0.5" style="font-size: 0.75rem;">
+                                            <i class="bi bi-geo-alt me-1"></i>
+                                            @if(optional($item->aset)->lokasi)
+                                                {{ $item->aset->lokasi->nama_lokasi ?? $item->aset->lokasi->nama ?? $item->aset->lokasi->lokasi ?? '-' }}
+                                            @else
+                                                -
+                                            @endif
+                                        </small>
+                                    </div>
                                 </div>
                             </td>
                             <td>
                                 <span class="badge bg-light text-dark border px-2 py-1 font-medium">
-                                    {{ $item->aset->kategori->nama_kategori ?? $item->aset->kategori->nama ?? '-' }}
+                                    {{ optional(optional($item->aset)->kategori)->nama_kategori ?? optional(optional($item->aset)->kategori)->nama ?? '-' }}
                                 </span>
                             </td>
                             <td class="text-muted">

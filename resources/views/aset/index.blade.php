@@ -2,7 +2,6 @@
 
 @section('content')
 <style>
-    /* Table Wrapper Card */
     .custom-table-card {
         background: #ffffff;
         border: 1px solid #f1f5f9;
@@ -148,7 +147,15 @@
                             <td>
                                 <div class="d-flex align-items-center gap-1.5 text-muted">
                                     <i class="bi bi-geo-alt"></i>
-                                    <span>{{ $item->lokasi ?? '-' }}</span>
+                                    <span>
+                                        @if(is_object($item->lokasi))
+                                            {{ $item->lokasi->nama_lokasi ?? $item->lokasi->nama ?? $item->lokasi->nama_ruangan ?? $item->lokasi->lokasi ?? '-' }}
+                                        @elseif(!empty($item->lokasi))
+                                            {{ $item->lokasi }}
+                                        @else
+                                            -
+                                        @endif
+                                    </span>
                                 </div>
                             </td>
                             <td class="text-center">
