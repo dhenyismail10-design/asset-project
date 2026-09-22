@@ -89,7 +89,7 @@
             <p class="text-muted mb-0 font-medium">Ringkasan real-time statistik data aset dan aktivitas transaksi.</p>
         </div>
         <div class="d-flex gap-2">
-            <a href="{{ route('aset.create') }}" class="btn btn-indigo text-white fw-semibold px-4 py-2 rounded-3 shadow-sm" style="background: #4f46e5; border: none;">
+            <a href="{{ Route::has('aset.create') ? route('aset.create') : url('/aset/create') }}" class="btn btn-indigo text-white fw-semibold px-4 py-2 rounded-3 shadow-sm" style="background: #4f46e5; border: none;">
                 <i class="bi bi-plus-lg me-1"></i> Tambah Aset Baru
             </a>
         </div>
@@ -165,7 +165,7 @@
                 <h5 class="fw-bold text-slate-900 mb-0">Peminjaman Terbaru</h5>
                 <small class="text-muted">Aktivitas transaksi peminjaman barang ter-update.</small>
             </div>
-            <a href="{{ route('peminjaman.index') }}" class="btn btn-sm btn-light text-indigo fw-semibold px-3 py-2 rounded-3" style="color: #4f46e5; background: #e0e7ff;">
+            <a href="{{ Route::has('peminjaman.index') ? route('peminjaman.index') : url('/peminjaman') }}" class="btn btn-sm btn-light text-indigo fw-semibold px-3 py-2 rounded-3" style="color: #4f46e5; background: #e0e7ff;">
                 Lihat Semua <i class="bi bi-arrow-right ms-1"></i>
             </a>
         </div>
@@ -189,11 +189,13 @@
                             <td>
                                 <div class="d-flex align-items-center gap-2">
                                     <i class="bi bi-box text-muted"></i>
-                                    <span>{{ $item->aset->nama_aset ?? '-' }}</span>
+                                    <span>{{ $item->aset->nama_barang ?? $item->aset->nama_aset ?? $item->aset->nama ?? '-' }}</span>
                                 </div>
                             </td>
                             <td>
-                                <span class="badge bg-light text-dark border px-2 py-1 font-medium">{{ $item->aset->kategori->nama_kategori ?? '-' }}</span>
+                                <span class="badge bg-light text-dark border px-2 py-1 font-medium">
+                                    {{ $item->aset->kategori->nama_kategori ?? $item->aset->kategori->nama ?? '-' }}
+                                </span>
                             </td>
                             <td class="text-muted">
                                 <i class="bi bi-calendar-event me-1"></i>

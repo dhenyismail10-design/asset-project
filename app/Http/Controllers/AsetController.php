@@ -3,39 +3,36 @@
 namespace App\Http\Controllers;
 
 use App\Models\Aset;
+use App\Models\Kategori;
 use Illuminate\Http\Request;
 
 class AsetController extends Controller
 {
     public function index()
     {
-        $asets = Aset::latest()->get();
-        return view('aset.index', compact('asets'));
+    $aset = Aset::with('kategori')->latest()->get(); 
+    return view('aset.index', compact('aset'));
     }
 
     public function create()
     {
-        return view('aset.create');
+        $categories = Kategori::all(); 
+    return view('aset.create', compact('categories'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'kode_barang' => 'required',
-            'nama_barang' => 'required',
-            'kondisi'     => 'required',
-            'lokasi'      => 'nullable',
-        ]);
+        'kode_barang' => 'required|string|max:255',
+        'nama_aset'   => 'required|string|max:255',
+        'kategori_id' => 'required|exists:kategoris,id', // Validasi kategori
+        'kondisi'     => 'required|string',
+        'lokasi'      => 'nullable|string',
+    ]);
 
-        // Simpan ke database dengan memetakan nama_barang -> nama_aset
-        Aset::create([
-            'kode_barang' => $request->kode_barang,
-            'nama_aset'   => $request->nama_barang, // Disamakan dengan kolom di database
-            'kondisi'     => $request->kondisi,
-            'lokasi'      => $request->lokasi,
-        ]);
+    Aset::create($request->all());
 
-        return redirect()->route('aset.index')->with('success', 'Data aset berhasil ditambahkan!');
+    return redirect()->route('aset.index')->with('success', 'Data aset berhasil ditambahkan!');
     }
 
     public function edit($id)

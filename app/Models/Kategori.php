@@ -12,8 +12,9 @@ class Kategori extends Model
     protected $table = 'kategoris';
     protected $guarded = ['id'];
 
-    public function asets()
+    // Di app/Models/Peminjaman.php
+    public function aset()
     {
-        return $this->hasMany(Aset::class, 'kategori_id');
+        return $this->belongsTo(Aset::class, 'aset_id'); // atau 'asset_id'
     }
 }
